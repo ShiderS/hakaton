@@ -1,8 +1,12 @@
-import sys, re, pymorphy2
+import sys, re, pymorphy2, csv
+from search import *
 
 morph = pymorphy2.MorphAnalyzer()
 main_word = ''
+id1 = ''
 data = open('main_words.txt', encoding='utf-8').read()
+themes = open('themes.txt', encoding='utf-8').read()
+themes_id = open('themes id.txt', encoding='utf-8').read()
 
 # Словарь id
 id_dict = {0: 'Общественный транспорт',
@@ -19,30 +23,30 @@ id_dict = {0: 'Общественный транспорт',
            11: 'Парки'
            }
 
+# Словарь тем
+dict_themes_id = {}
+for i in range(1, len(themes_id.split('\n')) + 1):
+    dict_themes_id[i] = themes.split('\n')[i]
+print(dict_themes_id)
+
+dict_themes = {}
+for i in range(len(themes.split('\n'))):
+    if themes.split('\n')[i].isdigit():
+        a = int(themes.split('\n')[i])
+    else:
+        if a in dict_themes:
+            dict_themes[a].append(themes.split('\n')[i])
+        else:
+            dict_themes[a] = [themes.split('\n')[i]]
+print(dict_themes)
+
 # Словарь ключевых слов
-list_main_words = {0: data.split('\n')[0].split(),
-                   1: data.split('\n')[1].split(),
-                   2: data.split('\n')[2].split(),
-                   3: data.split('\n')[3].split(),
-                   4: data.split('\n')[4].split(),
-                   5: data.split('\n')[5].split(),
-                   6: data.split('\n')[6].split(),
-                   7: data.split('\n')[7].split(),
-                   8: data.split('\n')[8].split(),
-                   9: data.split('\n')[9].split(),
-                   10: data.split('\n')[10].split(),
-                   11: data.split('\n')[11].split(),
-                   }
+dict_main_words = {}
+for i in range(12):
+    dict_main_words[i] = data.split('\n')[i].split()
 
 # Считываем текст потоковым вводом и создаем список из слов
 text = sys.stdin.read()
 text = re.split('\W', text)
 
-for i in range(len(text)):
-    if text[i] != '' and len(text[i]) != 1:
-        for j in range(12):
-            if morph.parse(text[i])[0].normal_form.lower() in list_main_words[j]:
-                main_word = id_dict[j]
-                break
-
-print(main_word)
+search(text, morph, dict_main_words, id_dict)
