@@ -5,10 +5,10 @@ morph = pymorphy2.MorphAnalyzer()
 main_word = ''
 id_tem = ''
 theme = ''
-data = open('main_words.txt', encoding='utf-8').read()
-data_themes = open('main_words_themes.txt', encoding='utf-8').read()
-themes = open('themes.txt', encoding='utf-8').read()
-themes_id = open('themes id.txt', encoding='utf-8').read()
+data = open('main_words.txt', encoding='utf-8').read().splitlines()
+data_themes = open('main_words_themes.txt', encoding='utf-8').read().splitlines()
+themes = open('themes.txt', encoding='utf-8').read().splitlines()
+themes_id = open('themes id.txt', encoding='utf-8').read().splitlines()
 
 # Словарь id
 id_dict = {0: 'Общественный транспорт',
@@ -27,29 +27,29 @@ id_dict = {0: 'Общественный транспорт',
 
 # Словарь тем
 dict_themes_id = {}
-for i in range(1, len(themes_id.split('\n')) + 1):
-    dict_themes_id[i] = themes.split('\n')[i]
+for i in range(1, len(themes_id) + 1):
+    dict_themes_id[i] = themes[i]
 print(dict_themes_id)
 
 dict_themes = {}
-for i in range(len(themes.split('\n'))):
-    if themes.split('\n')[i].isdigit():
-        a = int(themes.split('\n')[i])
+for i in range(len(themes)):
+    if themes[i].isdigit():
+        a = int(themes[i])
     else:
         if a in dict_themes:
-            dict_themes[a].append(themes.split('\n')[i])
+            dict_themes[a].append(themes[i])
         else:
-            dict_themes[a] = [themes.split('\n')[i]]
+            dict_themes[a] = [themes[i]]
 
 # Словарь ключевых слов
 dict_main_words = {}
 for i in range(12):
-    dict_main_words[i] = data.split('\n')[i].split()
+    dict_main_words[i] = data[i].split()
 print(dict_main_words)
 
 dict_main_words_themes = {}
-for i in range(12):
-    dict_main_words_themes[i] = data_themes.split('\n')[i].split()
+for i in range(len(data_themes)):
+    dict_main_words_themes[i] = data_themes[i].split()
 print(dict_main_words_themes)
 
 # Открываем csv файл
@@ -71,11 +71,12 @@ def search(text, main_word, id_tem, theme):
                     main_word = id_dict[j]
                     id_tem = j
                     for p in range(len(dict_main_words_themes)):
-                        if morph.parse(text[i])[0].normal_form.lower() in dict_main_words_themes[j]:
-                            theme = data_themes[p]
+                        if morph.parse(text[i])[0].normal_form.lower() in dict_main_words_themes[p]:
+                            theme = themes_id[p]
                         break
     return id_tem, main_word, theme
 
 
 for i in range(1, len(text) + 1):
     print(search(text[i], main_word, id_tem, theme))
+
