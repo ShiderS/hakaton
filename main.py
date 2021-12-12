@@ -100,7 +100,8 @@ class Main:
                             len(self.morph.parse(text[i])[0].normal_form.lower()) > 1:
                         self.dict_main_words_themes[self.id_tem].index(p)
                         self.theme = self.dict_themes[self.id_tem][self.dict_main_words_themes[self.id_tem].index(p)]
-        self.file.append({'cat_id': self.id_tem,
+        self.file.append({'id': self.i,
+                          'cat_id': self.id_tem,
                           'cat_name': self.main_word,
                           'theme_name': self.theme,
                           'comment_text': comment})
