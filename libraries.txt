@@ -1,0 +1,6 @@
+re
+pymorphy2
+csv
+flask
+flask_wtf
+wtforms
