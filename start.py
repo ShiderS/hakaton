@@ -13,9 +13,9 @@ def index():
     if form.validate_on_submit():
         f = form.file_csv.data
         if f.filename != '':
-            app = Main(f.filename)
             save_to = f'static/saved_files/{f.filename}'
             f.save(save_to)
+            app = Main(f.filename)
             return redirect(f'/result/output.csv')
         return redirect('/')
     return render_template('index.html', title='Хакатон', form=form)
