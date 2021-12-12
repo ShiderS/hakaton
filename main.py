@@ -9,6 +9,7 @@ data = open('main_words.txt', encoding='utf-8').read().splitlines()
 data_themes = open('main_words_themes.txt', encoding='utf-8').read().splitlines()
 themes = open('themes.txt', encoding='utf-8').read().splitlines()
 themes_id = open('themes id.txt', encoding='utf-8').read().splitlines()
+file = []
 
 # Словарь id
 id_dict = {0: 'Общественный транспорт',
@@ -28,8 +29,7 @@ id_dict = {0: 'Общественный транспорт',
 # Словарь тем
 dict_themes_id = {}
 for i in range(1, len(themes_id) + 1):
-    dict_themes_id[i] = themes[i]
-print(dict_themes_id)
+    dict_themes_id[i] = themes_id[i - 1]
 
 dict_themes = {}
 for i in range(len(themes)):
@@ -45,12 +45,10 @@ for i in range(len(themes)):
 dict_main_words = {}
 for i in range(12):
     dict_main_words[i] = data[i].split()
-print(dict_main_words)
 
 dict_main_words_themes = {}
 for i in range(len(data_themes)):
     dict_main_words_themes[i] = data_themes[i].split()
-print(dict_main_words_themes)
 
 # Открываем csv файл
 text = {}
@@ -62,7 +60,8 @@ with open('primer.csv', encoding="utf8") as csvfile:
 csvoutputfile = open('output.csv', 'a', encoding='utf8')
 
 
-def search(text, main_word, id_tem, theme):
+def search(text, main_word, id_tem, theme, file):
+    comment = text
     text = re.split('\W', text)
     for i in range(len(text)):
         if text[i] != '' and len(text[i]) != 1:
@@ -74,9 +73,19 @@ def search(text, main_word, id_tem, theme):
                         if morph.parse(text[i])[0].normal_form.lower() in dict_main_words_themes[p]:
                             theme = themes_id[p]
                         break
-    return id_tem, main_word, theme
+    file.append({'cat_id': id_tem,
+                 'cat_name': main_word,
+                 'theme_name': theme,
+                 'comment_text': comment})
 
 
 for i in range(1, len(text) + 1):
-    print(search(text[i], main_word, id_tem, theme))
+    search(text[i], main_word, id_tem, theme, file)
 
+with open('output.csv', 'w', newline='', encoding="utf8") as f:
+    writer = csv.DictWriter(
+        f, fieldnames=list(file[0].keys()),
+        delimiter=';', quotechar='"')
+    writer.writeheader()
+    for d in file:
+        writer.writerow(d)
