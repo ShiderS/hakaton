@@ -1,9 +1,6 @@
 import re, pymorphy2, csv
 
 
-# from search import *
-
-
 class Main:
     def __init__(self, file_name):
         self.morph = pymorphy2.MorphAnalyzer()
