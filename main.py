@@ -1,4 +1,6 @@
 import re, pymorphy2, csv
+
+
 # from search import *
 
 
@@ -8,28 +10,28 @@ class Main:
         self.main_word = ''
         self.id_tem = ''
         self.theme = ''
+        self.file = []
+
+        # Открываем файлы
         self.data = open('files/main_words.txt', encoding='utf-8').read().splitlines()
         self.data_themes = open('files/main_words_themes.txt', encoding='utf-8').read().splitlines()
         self.themes = open('files/themes.txt', encoding='utf-8').read().splitlines()
         self.themes_id = open('files/themes id.txt', encoding='utf-8').read().splitlines()
-        self.file = []
-
-        # Словарь id
         self.id_dict = {1: 'Общественный транспорт',
-                   2: 'Социальная помощь',
-                   3: 'Образовательные учреждения',
-                   4: 'Спорт',
-                   5: 'Организация отдыха и оздоровления детей',
-                   6: 'Уборка снега',
-                   7: 'Реклама и граффити',
-                   8: 'Уличное освещение',
-                   9: 'Мусор',
-                   10: 'Дороги',
-                   11: 'Дворы',
-                   12: 'Парки'
-                   }
+                        2: 'Социальная помощь',
+                        3: 'Образовательные учреждения',
+                        4: 'Спорт',
+                        5: 'Организация отдыха и оздоровления детей',
+                        6: 'Уборка снега',
+                        7: 'Реклама и граффити',
+                        8: 'Уличное освещение',
+                        9: 'Мусор',
+                        10: 'Дороги',
+                        11: 'Дворы',
+                        12: 'Парки'
+                        }
 
-        # Словарь тем
+        # Создаем словари
         self.dict_themes_id = {}
         for i in range(1, len(self.themes_id) + 1):
             self.dict_themes_id[i] = self.themes_id[i - 1]
@@ -44,7 +46,6 @@ class Main:
                 else:
                     self.dict_themes[a] = [self.themes[i]]
 
-        # Словарь ключевых слов
         self.dict_main_words = {}
         for i in range(1, 13):
             self.dict_main_words[i] = self.data[i - 1].split()
@@ -65,13 +66,18 @@ class Main:
             for row in reader:
                 self.text[int(row['\ufeffid'])] = row['comment_text']
 
+        # Создаем новый csv файл
         self.csvoutputfile = open('output.csv', 'a', encoding='utf8')
+
+        # Вызываем функцию
         self.creature_csv()
 
     def creature_csv(self):
         for self.i in range(1, len(self.text) + 1):
+            # Вызываем функцию с определением темы
             self.search()
 
+        # Записываем в другой файл id, id тем и комментарий
         with open(f'static/saved_files/output.csv', 'w', newline='', encoding="utf8") as f:
             writer = csv.DictWriter(
                 f, fieldnames=list(self.file[0].keys()),
@@ -98,6 +104,6 @@ class Main:
                         self.dict_main_words_themes[self.id_tem].index(p)
                         self.theme = self.dict_themes[self.id_tem][self.dict_main_words_themes[self.id_tem].index(p)]
         self.file.append({'cat_id': self.id_tem,
-                     'cat_name': self.main_word,
-                     'theme_name': self.theme,
-                     'comment_text': comment})
+                          'cat_name': self.main_word,
+                          'theme_name': self.theme,
+                          'comment_text': comment})
